@@ -86,11 +86,11 @@ def add_keywords(tree, config):
     et_linkage = ET.SubElement(ET.SubElement(ET.SubElement(et_citation, "cit:onlineResource"), "cit:CI_OnlineResource"), "cit:linkage")
     ET.SubElement(et_linkage, "gco:CharacterString").text = config['restricted_template']['online_resource']
 
-    # Inserts the section with the other descriptiveKeyword sections
-    # TODO: Unsure if constant or will need to be detected
-    # Can do a find for descriptiveKeywords, find index of the last one and place after it
+    # Inserts the section after the other descriptiveKeyword sections
+    # Should always at least one otherwise the dataset would be fully restricted
     et_data_identification = tree.find(".//mri:MD_DataIdentification", namespaces)
-    et_data_identification.insert(len(et_data_identification) - 2, et_subelement_root)
+    insert_point = list(et_data_identification).index(et_data_identification.findall(".//mri:descriptiveKeywords", namespaces)[-1])
+    et_data_identification.insert(insert_point + 1, et_subelement_root)
     ET.indent(et_data_identification, level =2)
     return tree
 
